@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from 'sonner'; // ✅ Using Sonner instead of default toaster
 import './globals.css';
 import { cn } from '@/lib/utils';
 
@@ -22,7 +22,9 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased')}>
         {children}
-        <Toaster />
+        
+        {/* ✅ Sonner Toaster: Handles the popup notifications */}
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   );

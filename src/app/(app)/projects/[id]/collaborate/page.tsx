@@ -20,7 +20,8 @@ import {
   Reply, Edit2, X, Code, FileUp, Image as ImageIcon, Github
 } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useToast } from '@/hooks/use-toast';
+// ✅ FIXED: Imported toast from sonner
+import { toast } from "sonner";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import Link from 'next/link';
@@ -49,7 +50,8 @@ type Message = {
 export default function CollaboratePage() {
   const params = useParams();
   const router = useRouter();
-  const { toast } = useToast();
+  // ❌ REMOVED: const { toast } = useToast();
+  
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
@@ -65,9 +67,8 @@ export default function CollaboratePage() {
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
   
-  // ✅ FIX: Instant Lock using Ref
   const isSendingRef = useRef(false); 
-  const [isSending, setIsSending] = useState(false); // For UI disabling
+  const [isSending, setIsSending] = useState(false);
   
   // Kanban States
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -101,10 +102,8 @@ export default function CollaboratePage() {
             else { checkMyRequestStatus(userId, p._id); }
 
             if (isOwner || isMember) {
-                // ✅ Initial Fetch -> Scroll True
                 fetchMessages(p._id, true);
                 fetchTasks(p._id);
-                // ✅ Polling Fetch -> Scroll False
                 const interval = setInterval(() => fetchMessages(p._id, false), 5000);
                 return () => clearInterval(interval);
             }
@@ -124,11 +123,27 @@ export default function CollaboratePage() {
   };
 
   const fetchIncomingRequests = async (projectId: string) => {
-      const res = await fetch(`/api/projects/${projectId}/requests`);
-      const data = await res.json();
-      if (data.requests) setIncomingRequests(data.requests);
-  };
+      try {
+          const res = await fetch(`/api/projects/${projectId}/requests`);
+          
+          if (!res.ok) {
+            console.error(`API Error ${res.status}:`, res.statusText);
+            return;
+          }
 
+          const text = await res.text();
+          if (!text) {
+             console.warn("API returned empty response");
+             return;
+          }
+
+          const data = JSON.parse(text);
+          if (data.requests) setIncomingRequests(data.requests);
+      } catch (error) {
+          console.error("Failed to fetch requests:", error);
+      }
+  };
+  
   const fetchMessages = async (projectId: string, shouldScroll = false) => {
       try {
         const res = await fetch(`/api/projects/${projectId}/messages`);
@@ -147,10 +162,8 @@ export default function CollaboratePage() {
   };
 
   const handleSendMessage = async () => {
-      // ✅ FIX: Check Ref Lock immediately
       if (!newMessage.trim() || isSendingRef.current) return;
       
-      // ✅ Lock
       isSendingRef.current = true;
       setIsSending(true);
 
@@ -168,7 +181,8 @@ export default function CollaboratePage() {
                   setMessages(prev => prev.map(m => m._id === editingMessageId ? data.message : m));
                   setEditingMessageId(null);
                   setNewMessage("");
-                  toast({ title: "Message updated" });
+                  // ✅ FIXED: Using toast.success
+                  toast.success("Message updated");
               }
           } else {
               const res = await fetch(`/api/projects/${project._id}/messages`, {
@@ -189,9 +203,9 @@ export default function CollaboratePage() {
               }
           }
       } catch (e) { 
-          toast({ title: "Failed to send", variant: "destructive" });
+          // ✅ FIXED: Using toast.error
+          toast.error("Failed to send message");
       } finally {
-          // ✅ Unlock
           isSendingRef.current = false;
           setIsSending(false);
       }
@@ -206,8 +220,12 @@ export default function CollaboratePage() {
               body: JSON.stringify({ messageId })
           });
           setMessages(prev => prev.filter(m => m._id !== messageId));
-          toast({ title: "Message deleted" });
-      } catch (e) { toast({ title: "Delete failed" }); }
+          // ✅ FIXED: Using toast.success
+          toast.success("Message deleted");
+      } catch (e) { 
+        // ✅ FIXED: Using toast.error
+        toast.error("Delete failed"); 
+      }
   };
 
   const initiateEdit = (msg: Message) => {
@@ -243,14 +261,73 @@ export default function CollaboratePage() {
 
   // --- KANBAN FUNCTIONS ---
   const fetchTasks = async (projectId: string) => { const res = await fetch(`/api/projects/${projectId}/tasks`); const data = await res.json(); if (data.tasks) setTasks(data.tasks); };
-  const handleCreateTask = async (status: string = 'todo') => { const defaultTitle = "New Task"; try { const res = await fetch(`/api/projects/${project._id}/tasks`, { method: "POST", body: JSON.stringify({ title: defaultTitle, status, color: "blue", createdBy: currentUser.id || currentUser._id }) }); const data = await res.json(); if (data.task) { setTasks([data.task, ...tasks]); setActiveTask(data.task); setIsSheetOpen(true); } } catch (e) { toast({ title: "Error", variant: "destructive" }); } };
+  
+  const handleCreateTask = async (status: string = 'todo') => { 
+    const defaultTitle = "New Task"; 
+    try { 
+        const res = await fetch(`/api/projects/${project._id}/tasks`, { method: "POST", body: JSON.stringify({ title: defaultTitle, status, color: "blue", createdBy: currentUser.id || currentUser._id }) }); 
+        const data = await res.json(); 
+        if (data.task) { 
+            setTasks([data.task, ...tasks]); 
+            setActiveTask(data.task); 
+            setIsSheetOpen(true); 
+        } 
+    } catch (e) { 
+        // ✅ FIXED: Using toast.error
+        toast.error("Failed to create task"); 
+    } 
+  };
+
   const handleUpdateTask = async (taskId: string, updates: any) => { setTasks(prev => prev.map(t => t._id === taskId ? { ...t, ...updates } : t)); if (activeTask?._id === taskId) setActiveTask(prev => prev ? { ...prev, ...updates } : null); try { const res = await fetch(`/api/projects/${project._id}/tasks`, { method: "PUT", body: JSON.stringify({ taskId, ...updates }) }); if(updates.assignedTo) { const data = await res.json(); if(data.task) setTasks(prev => prev.map(t => t._id === taskId ? data.task : t)); } } catch (e) { fetchTasks(project._id); } };
+  
   const handleDeleteTask = async (taskId: string) => { if (!confirm("Delete task?")) return; setTasks(prev => prev.filter(t => t._id !== taskId)); setIsSheetOpen(false); await fetch(`/api/projects/${project._id}/tasks`, { method: "DELETE", body: JSON.stringify({ taskId }) }); };
+  
   const handleDragStart = (e: React.DragEvent, taskId: string) => { setDraggedTaskId(taskId); e.dataTransfer.effectAllowed = "move"; };
+  
   const handleDrop = (e: React.DragEvent, status: 'todo' | 'in-progress' | 'done') => { e.preventDefault(); if (draggedTaskId) { handleUpdateTask(draggedTaskId, { status }); setDraggedTaskId(null); }};
+  
   const handleDragOver = (e: React.DragEvent) => e.preventDefault();
-  const handleJoin = async () => { try { const res = await fetch("/api/requests", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ projectId: project._id, userId: currentUser.id || currentUser._id, ownerId: project.owner?._id || project.owner }) }); if (res.ok) { setRole('pending'); toast({ title: "Request Sent" }); } } catch (e) { toast({ title: "Error", variant: "destructive" }); } };
-  const handleDecision = async (requestId: string, action: 'accepted' | 'rejected') => { try { const res = await fetch("/api/requests", { method: "PUT", body: JSON.stringify({ requestId, action }) }); if (res.ok) { toast({ title: `Request ${action}` }); setIncomingRequests(prev => prev.filter(r => r._id !== requestId)); if (action === 'accepted') window.location.reload(); } } catch (e) { toast({ title: "Error", variant: "destructive" }); } };
+  
+  const handleJoin = async () => { 
+    try { 
+        const res = await fetch("/api/requests", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ projectId: project._id, userId: currentUser.id || currentUser._id, ownerId: project.owner?._id || project.owner }) }); 
+        if (res.ok) { 
+            setRole('pending'); 
+            // ✅ FIXED: Using toast.success
+            toast.success("Request Sent"); 
+        } 
+    } catch (e) { 
+        // ✅ FIXED: Using toast.error
+        toast.error("Failed to join project"); 
+    } 
+  };
+  
+  const handleDecision = async (requestId: string, status: 'accepted' | 'rejected') => {
+    try {
+        const res = await fetch("/api/requests", { 
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ requestId, status }) 
+        });
+
+        if (res.ok) {
+            // ✅ FIXED: Using toast.success
+            toast.success(`Request ${status}`);
+            setIncomingRequests(prev => prev.filter(r => r._id !== requestId));
+            
+            if (status === 'accepted') window.location.reload(); 
+        } else {
+            const errorData = await res.json().catch(() => ({}));
+            console.error("Update failed:", errorData);
+            // ✅ FIXED: Using toast.error
+            toast.error("Update failed");
+        }
+    } catch (e) {
+        console.error(e);
+        // ✅ FIXED: Using toast.error
+        toast.error("Connection error");
+    }
+  };
 
   if (loading) return <div className="flex h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
   if (!project) return <div className="p-10 text-center">Project not found</div>;
@@ -291,7 +368,6 @@ export default function CollaboratePage() {
       </div>
       
       {!isAccessGranted ? ( 
-          // ✅ PUBLIC PROJECT INFO RESTORED
           <div className="grid gap-8 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-8">
                 <Card>
@@ -391,7 +467,7 @@ export default function CollaboratePage() {
                         <div className="p-3 flex gap-2 items-end">
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="text-muted-foreground rounded-full hover:bg-muted shrink-0 h-10 w-10"><Plus className="w-5 h-5"/></Button></DropdownMenuTrigger>
-                                <DropdownMenuContent align="start"><DropdownMenuItem onClick={insertCodeBlock}><Code className="w-4 h-4 mr-2"/> Code Block</DropdownMenuItem><DropdownMenuSeparator /><DropdownMenuItem onClick={() => toast({title: "File Upload", description: "Storage not configured yet."})}><FileUp className="w-4 h-4 mr-2"/> Upload File</DropdownMenuItem><DropdownMenuItem onClick={() => toast({title: "Image Upload", description: "Storage not configured yet."})}><ImageIcon className="w-4 h-4 mr-2"/> Upload Image</DropdownMenuItem></DropdownMenuContent>
+                                <DropdownMenuContent align="start"><DropdownMenuItem onClick={insertCodeBlock}><Code className="w-4 h-4 mr-2"/> Code Block</DropdownMenuItem><DropdownMenuSeparator /><DropdownMenuItem onClick={() => toast.info("File Upload", { description: "Storage not configured yet." })}><FileUp className="w-4 h-4 mr-2"/> Upload File</DropdownMenuItem><DropdownMenuItem onClick={() => toast.info("Image Upload", { description: "Storage not configured yet." })}><ImageIcon className="w-4 h-4 mr-2"/> Upload Image</DropdownMenuItem></DropdownMenuContent>
                             </DropdownMenu>
                             <Textarea 
                                 ref={textareaRef} 
@@ -401,7 +477,6 @@ export default function CollaboratePage() {
                                 onKeyDown={e => { 
                                     if(e.key === 'Enter' && !e.shiftKey) { 
                                         e.preventDefault(); 
-                                        // ✅ Check Lock
                                         if(!isSendingRef.current) handleSendMessage(); 
                                     }
                                 }} 

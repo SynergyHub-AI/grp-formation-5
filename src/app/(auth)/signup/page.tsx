@@ -12,11 +12,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { X, PlusCircle, Loader2 } from 'lucide-react';
 import { Logo } from '@/components/logo';
-import { useToast } from "@/hooks/use-toast"; // ✅ Import the Toast hook
+import { toast } from "sonner"; // ✅ Correct import
 
 export default function SignupPage() {
   const router = useRouter();
-  const { toast } = useToast(); // ✅ Initialize the hook
+
   const [loading, setLoading] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -57,11 +57,13 @@ export default function SignupPage() {
       const data = await res.json();
 
       if (res.ok) {
-        // ✅ REPLACED ALERT WITH TOAST
-        toast({
-          title: "Account Created! 🎉",
-          description: "Redirecting you to login...",
-          variant: "default", 
+        // ✅ Success Toast
+        toast.success("Account Created! 🎉", {
+          description: "Redirecting to login...",
+          action: {
+            label: "Login Now",
+            onClick: () => router.push("/login"),
+          },
         });
 
         // Small delay so user can read the toast before redirecting
@@ -70,19 +72,16 @@ export default function SignupPage() {
         }, 1500);
         
       } else {
-        // ✅ REPLACED ERROR ALERT WITH TOAST
-        toast({
-          title: "Signup Failed",
-          description: data.error || "Please try again.",
-          variant: "destructive", // This makes it red
+        // ✅ Fixed Error Toast Syntax
+        toast.error("Signup Failed", {
+          description: data.error || "Please try again."
         });
       }
     } catch (error) {
       console.error("Signup Error:", error);
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please check your connection.",
-        variant: "destructive",
+      // ✅ Fixed Catch Block to use Sonner
+      toast.error("Connection Error", {
+        description: "Something went wrong. Please check your connection."
       });
     } finally {
       setLoading(false);

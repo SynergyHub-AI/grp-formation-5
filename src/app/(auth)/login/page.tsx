@@ -9,11 +9,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Logo } from '@/components/logo';
 import { Loader2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast"; // ✅ Import Toast
+// ✅ FIX 1: Import 'toast' directly from Sonner
+import { toast } from "sonner"; 
 
 export default function LoginPage() {
   const router = useRouter();
-  const { toast } = useToast();
+  // ❌ REMOVED: const { toast } = useToast(); (Not needed for Sonner)
+  
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -34,37 +36,28 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (res.ok) {
-        // ✅ Success Toast
         localStorage.setItem("user", JSON.stringify(data.user));
-        toast({
-          title: "Welcome back! 👋",
-          description: "Login successful.",
-          variant: "default",
+        
+        // ✅ FIX 2: Use Sonner syntax (Green)
+        toast.success("Login successful!", {
+            description: "Welcome back to SynergyHub."
         });
+        
         router.push("/dashboard"); 
       } else {
-        // ❌ Error Toast
-        toast({
-          title: "Login Failed",
-          description: data.error || "Invalid email or password",
-          variant: "destructive",
+        // ✅ FIX 3: Use Sonner syntax (Red)
+        toast.error("Login Failed", {
+            description: data.error || "Invalid email or password"
         });
       }
     } catch (error) {
       console.error("Login Error:", error);
-      toast({
-        title: "Error",
-        description: "Something went wrong. Please try again.",
-        variant: "destructive",
+      toast.error("Connection Error", {
+          description: "Something went wrong. Please try again."
       });
     } finally {
       setLoading(false);
     }
-  };
-
-  // Quick helper for demo
-  const handleDemoLogin = () => {
-    setFormData({ email: "demo@example.com", password: "password123" });
   };
 
   return (

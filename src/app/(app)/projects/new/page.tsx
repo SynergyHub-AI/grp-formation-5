@@ -10,12 +10,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { X, PlusCircle, Loader2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+// ✅ FIXED: Imported toast from sonner
+import { toast } from "sonner";
 import { useRouter } from 'next/navigation';
 
 export default function CreateProjectPage() {
-    const { toast } = useToast();
     const router = useRouter();
+    // ❌ REMOVED: const { toast } = useToast();
     
     const [loading, setLoading] = useState(false);
     const [userId, setUserId] = useState<string | null>(null);
@@ -70,7 +71,8 @@ export default function CreateProjectPage() {
         event.preventDefault();
         
         if (!userId) {
-            toast({ title: "Error", description: "You must be logged in.", variant: "destructive" });
+            // ✅ FIXED: Using toast.error
+            toast.error("Error", { description: "You must be logged in." });
             return;
         }
 
@@ -103,7 +105,8 @@ ${description}
             });
 
             if (res.ok) {
-                toast({ title: "Project Created! 🎉", description: "Your project is now live." });
+                // ✅ FIXED: Using toast.success
+                toast.success("Project Created! 🎉", { description: "Your project is now live." });
                 router.push('/dashboard');
             } else {
                 throw new Error("Failed to save project");
@@ -111,7 +114,8 @@ ${description}
 
         } catch (error) {
             console.error(error);
-            toast({ title: "Error", description: "Something went wrong.", variant: "destructive" });
+            // ✅ FIXED: Using toast.error
+            toast.error("Error", { description: "Something went wrong." });
         } finally {
             setLoading(false);
         }
@@ -119,7 +123,6 @@ ${description}
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
-        {/* Removed duplicate "Back to Dashboard" button here */}
       
         <form onSubmit={handleSubmit}>
             <Card>

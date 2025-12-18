@@ -23,13 +23,15 @@ import {
   Settings,
   UserCircle,
   LogOut,
-  Bell,
   ArrowLeft
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { demoUser } from '@/lib/data';
+
+// ✅ 1. Import the new Notification Component
+import NotificationBell from '@/components/ui/NotificationBell';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -82,7 +84,6 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </Sidebar>
 
       <SidebarInset>
-        {/* ✅ UPDATED HEADER WITH BACK BUTTON */}
         <header className="flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 sticky top-0 z-30">
           <SidebarTrigger className="md:hidden" />
           
@@ -97,16 +98,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                 <span className="hidden sm:inline">Back</span>
             </Button>
           ) : (
-            // Show Logo on mobile if on root page
              <div className="md:hidden">
                 <Logo />
              </div>
           )}
 
           <div className="ml-auto flex items-center gap-4">
-             <Button variant="ghost" size="icon" className="rounded-full">
-              <Bell className="h-5 w-5" />
-            </Button>
+             {/* ✅ 2. Replaced static Bell button with new Component */}
+             <NotificationBell />
             
             {isMounted ? (
               <DropdownMenu>

@@ -404,18 +404,33 @@ export default function CollaboratePage() {
                         <Card className="border-border/50 bg-card/50 backdrop-blur-sm shadow-sm h-fit">
                             <CardHeader><CardTitle className="font-headline flex items-center gap-2 text-xl"><Users className="w-5 h-5 text-primary" /> Team</CardTitle></CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 border border-border/30">
-                                    <Avatar className="w-10 h-10 border-2 border-background"><AvatarFallback className="bg-primary/20 text-primary font-bold">{project.owner?.name?.charAt(0) || "O"}</AvatarFallback></Avatar>
-                                    <div className="flex-grow"><p className="font-semibold text-sm">{project.owner?.name || "Owner"}</p><Badge variant="outline" className="text-[10px] h-5 border-primary/20 text-primary">Owner</Badge></div>
-                                </div>
+                                <Link href={`/users/${project.owner?._id || project.owner}`} className="block">
+                                    <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/40 border border-border/40 hover:bg-muted/60 transition-colors group cursor-pointer">
+                                        <Avatar className="w-10 h-10 border-2 border-background ring-2 ring-primary/10 group-hover:scale-105 transition-transform"><AvatarFallback className="bg-primary/20 text-primary font-bold">{project.owner?.name?.charAt(0) || "O"}</AvatarFallback></Avatar>
+                                        <div className="flex-grow">
+                                            <p className="font-semibold text-sm group-hover:text-primary transition-colors">{project.owner?.name || "Owner"}</p>
+                                            <p className="text-xs text-muted-foreground">{project.owner?.email}</p>
+                                        </div>
+                                        <Badge className="bg-primary/10 text-primary border-primary/20 hover:bg-primary/20">Owner</Badge>
+                                    </div>
+                                </Link>
                                 {project.team?.map((member: any, index: number) => {
                                     const userData = member.user || member;
                                     if (!userData) return null;
                                     return (
-                                        <div key={index} className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors">
-                                            <Avatar className="w-8 h-8"><AvatarFallback>{userData.name?.charAt(0)}</AvatarFallback></Avatar>
-                                            <div className="flex-grow"><p className="font-semibold text-sm">{userData.name}</p><p className="text-xs text-muted-foreground">{member.role || "Member"}</p></div>
-                                        </div>
+                                        <Link href={`/users/${userData._id}`} key={index} className="block">
+                                            <div className="flex items-center gap-4 p-3 rounded-lg hover:bg-muted/50 transition-all border border-transparent hover:border-border/30 group cursor-pointer">
+                                                <Avatar className="w-10 h-10 border border-border group-hover:scale-105 transition-transform">
+                                                    <AvatarImage src={userData.avatarUrl} />
+                                                    <AvatarFallback>{userData.name?.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                                <div className="flex-grow">
+                                                    <p className="font-semibold text-sm group-hover:text-primary transition-colors">{userData.name}</p>
+                                                    <p className="text-xs text-muted-foreground">{userData.email || "Member"}</p>
+                                                </div>
+                                                <Badge variant="secondary" className="bg-secondary/50 text-muted-foreground">Member</Badge>
+                                            </div>
+                                        </Link>
                                     )
                                 })}
                                 {!project.team?.length && <div className="text-center py-6 text-muted-foreground text-sm flex flex-col items-center gap-2"><Users className="w-8 h-8 opacity-20" /><p>No other members yet.</p></div>}
@@ -540,13 +555,18 @@ export default function CollaboratePage() {
                                             <div className="space-y-4">
                                                 {incomingRequests.map(req => (
                                                     <div key={req._id} className="flex flex-col sm:flex-row justify-between items-center p-4 border border-border/50 rounded-lg bg-card hover:border-primary/30 transition-all gap-4">
-                                                        <div className="flex items-center gap-4 w-full sm:w-auto">
-                                                            <Avatar className="h-12 w-12 border-2 border-background"><AvatarFallback>{req.applicant.name?.charAt(0)}</AvatarFallback></Avatar>
-                                                            <div>
-                                                                <p className="font-semibold text-base">{req.applicant.name}</p>
-                                                                <p className="text-xs text-muted-foreground">{req.applicant.email}</p>
-                                                                {req.message && <div className="mt-2 text-xs bg-muted/50 p-2 rounded italic">"{req.message}"</div>}
-                                                            </div>
+                                                        <div className="flex items-center gap-4 w-full sm:w-auto overflow-hidden">
+                                                            <Link href={`/users/${req.applicant?._id || req.applicant}`} className="flex items-center gap-4 group cursor-pointer min-w-0">
+                                                                <Avatar className="h-12 w-12 border-2 border-background ring-2 ring-primary/10 group-hover:scale-105 transition-transform"><AvatarFallback>{req.applicant.name?.charAt(0)}</AvatarFallback></Avatar>
+                                                                <div className="min-w-0">
+                                                                    <div className="flex items-center gap-2">
+                                                                        <p className="font-semibold text-base truncate group-hover:text-primary transition-colors">{req.applicant.name}</p>
+                                                                        <Badge variant="outline" className="text-[10px] h-5 hidden sm:flex">Applicant</Badge>
+                                                                    </div>
+                                                                    <p className="text-xs text-muted-foreground truncate">{req.applicant.email}</p>
+                                                                    {req.message && <div className="mt-2 text-xs bg-muted/50 p-2 rounded italic line-clamp-2">"{req.message}"</div>}
+                                                                </div>
+                                                            </Link>
                                                         </div>
                                                         <div className="flex gap-2 w-full sm:w-auto justify-end">
                                                             <Button size="sm" variant="outline" className="text-destructive hover:bg-destructive/10 border-destructive/20" onClick={() => handleDecision(req._id, 'rejected')}>Reject</Button>

@@ -100,8 +100,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="fixed inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none -z-40" />
       <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] bg-primary/20 blur-[120px] rounded-full opacity-20 pointer-events-none -z-40 animate-pulse-slow" />
 
-      <Sidebar className="border-r border-white/5 bg-sidebar/30 backdrop-blur-2xl">
-        <SidebarHeader className="border-b border-white/5 px-4 py-4">
+      <Sidebar className="border-r border-border/50 dark:border-white/5 bg-sidebar/30 backdrop-blur-2xl">
+        <SidebarHeader className="border-b border-border/50 dark:border-white/5 px-4 py-4">
           <Logo />
         </SidebarHeader>
 
@@ -134,7 +134,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </SidebarGroup>
         </SidebarContent>
 
-        <SidebarFooter className="p-4 border-t border-white/5">
+        <SidebarFooter className="p-4 border-t border-border/50 dark:border-white/5">
           <SidebarMenu>
             <SidebarMenuItem>
               {isMounted ? (
@@ -142,9 +142,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   <DropdownMenuTrigger asChild>
                     <SidebarMenuButton
                       size="lg"
-                      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-white/5 transition-colors border border-transparent hover:border-white/5"
+                      className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground hover:bg-white/5 transition-colors border border-transparent hover:border-border/20 dark:hover:border-white/5"
                     >
-                      <Avatar className="h-9 w-9 rounded-lg border border-white/10 ring-2 ring-transparent group-hover:ring-primary/20 transition-all">
+                      <Avatar className="h-9 w-9 rounded-lg border border-border/50 dark:border-white/10 ring-2 ring-transparent group-hover:ring-primary/20 transition-all">
                         <AvatarImage src={user.avatar || ''} alt={user.name || ''} />
                         <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-medium">
                           {user.name ? user.name.charAt(0) : 'U'}
@@ -158,7 +158,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     </SidebarMenuButton>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
-                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-xl border-white/10 bg-black/80 backdrop-blur-xl shadow-2xl"
+                    className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-xl border-border/50 dark:border-white/10 bg-popover/80 dark:bg-black/80 backdrop-blur-xl shadow-2xl"
                     side="bottom"
                     align="end"
                     sideOffset={4}
@@ -173,20 +173,20 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                         </Avatar>
                         <div className="grid flex-1 text-left text-sm leading-tight">
                           <span className="truncate font-semibold">{user.name}</span>
-                          <span className="truncate text-xs">{user.email}</span>
+                          <span className="truncate text-xs text-muted-foreground">{user.email}</span>
                         </div>
                       </div>
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-white/10" />
+                    <DropdownMenuSeparator className="bg-border/50 dark:bg-white/10" />
                     <DropdownMenuItem asChild className="cursor-pointer focus:bg-primary/10 focus:text-primary">
                       <Link href="/profile"><User className="mr-2 h-4 w-4" />Profile</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild className="cursor-pointer focus:bg-primary/10 focus:text-primary">
                       <Link href="/settings"><Settings className="mr-2 h-4 w-4" />Settings</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator className="bg-white/10" />
+                    <DropdownMenuSeparator className="bg-border/50 dark:bg-white/10" />
 
-                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-400 focus:text-red-400 focus:bg-red-950/30">
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 dark:text-red-400 focus:text-red-700 dark:focus:text-red-400 focus:bg-red-50 dark:focus:bg-red-950/30">
                       <LogOut className="mr-2 h-4 w-4" />
                       Log out
                     </DropdownMenuItem>
@@ -208,7 +208,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </Sidebar>
 
       <SidebarInset className="bg-transparent">
-        <header className="flex h-16 items-center gap-4 border-b border-white/5 bg-background/40 backdrop-blur-md px-4 md:px-6 sticky top-0 z-30 transition-all">
+        <header className="flex h-16 items-center gap-4 border-b border-border/50 dark:border-white/5 bg-background/40 backdrop-blur-md px-4 md:px-6 sticky top-0 z-30 transition-all">
           <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" />
 
           <div className="flex-1" />

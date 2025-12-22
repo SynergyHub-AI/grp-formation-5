@@ -71,16 +71,16 @@ export default function LoginPage() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md relative z-10"
       >
-        <Card className="shadow-2xl border-white/10 bg-black/40 backdrop-blur-xl overflow-hidden">
+        <Card className="shadow-2xl border-border/50 bg-white/80 dark:bg-black/40 backdrop-blur-xl overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
 
           <CardHeader className="text-center space-y-2 pb-6 pt-8">
             <div className="flex justify-center mb-4">
-              <div className="p-3 rounded-2xl bg-white/5 border border-white/10 shadow-lg shadow-primary/10">
+              <div className="p-3 rounded-2xl bg-secondary/50 dark:bg-white/5 border border-border/50 dark:border-white/10 shadow-lg shadow-primary/10">
                 <Logo />
               </div>
             </div>
-            <CardTitle className="font-headline text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-white to-white/60">Welcome Back</CardTitle>
+            <CardTitle className="font-headline text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-slate-900 to-slate-600 dark:from-white dark:to-white/60">Welcome Back</CardTitle>
             <CardDescription className="text-lg font-light text-muted-foreground">Enter your credentials to access your workspace.</CardDescription>
           </CardHeader>
 
@@ -94,7 +94,7 @@ export default function LoginPage() {
                     id="email"
                     type="email"
                     placeholder="name@example.com"
-                    className="pl-10 h-11 border-white/10 bg-white/5 disabled:opacity-50 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-lg"
+                    className="pl-10 h-11 border-border/50 dark:border-white/10 bg-muted/50 dark:bg-white/5 disabled:opacity-50 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-lg"
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -117,7 +117,7 @@ export default function LoginPage() {
                     id="password"
                     type="password"
                     placeholder="••••••••"
-                    className="pl-10 h-11 border-white/10 bg-white/5 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-lg"
+                    className="pl-10 h-11 border-border/50 dark:border-white/10 bg-muted/50 dark:bg-white/5 focus:border-primary/50 focus:ring-primary/20 transition-all rounded-lg"
                     required
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
@@ -141,10 +141,10 @@ export default function LoginPage() {
 
               <div className="relative w-full">
                 <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t border-white/10" />
+                  <span className="w-full border-t border-border/50 dark:border-white/10" />
                 </div>
                 <div className="relative flex justify-center text-[10px] uppercase tracking-widest">
-                  <span className="bg-black/40 px-3 text-muted-foreground rounded-full backdrop-blur-xl">Or continue with</span>
+                  <span className="bg-white/80 dark:bg-black/40 px-3 text-muted-foreground rounded-full backdrop-blur-xl">Or continue with</span>
                 </div>
               </div>
 

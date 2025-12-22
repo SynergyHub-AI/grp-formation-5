@@ -46,7 +46,7 @@ const MetricCard = ({ title, value, subtext, icon: Icon, color, delay }: any) =>
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay }}
         whileHover={{ y: -5, boxShadow: `0 10px 30px -10px ${color}40` }}
-        className="relative overflow-hidden rounded-2xl border border-slate-200/60 dark:border-white/5 bg-white/60 dark:bg-white/5 p-6 backdrop-blur-xl transition-all shadow-sm dark:shadow-none"
+        className="relative overflow-hidden rounded-2xl border border-border/50 dark:border-white/5 bg-card/80 dark:bg-white/5 p-6 backdrop-blur-xl transition-all shadow-sm dark:shadow-none"
     >
         <div className={`absolute top-0 right-0 p-4 opacity-10 dark:opacity-20`} style={{ color }}>
             <Icon className="h-16 w-16 -mr-4 -mt-4 rotate-12" />
@@ -54,7 +54,7 @@ const MetricCard = ({ title, value, subtext, icon: Icon, color, delay }: any) =>
 
         <div className="relative z-10">
             <div className="flex items-center gap-2 mb-2">
-                <div className={`p-2 rounded-lg bg-slate-100 dark:bg-white/5`} style={{ color }}>
+                <div className={`p-2 rounded-lg bg-secondary/50 dark:bg-white/5`} style={{ color }}>
                     <Icon className="h-5 w-5" />
                 </div>
                 <span className="text-sm font-medium text-muted-foreground">{title}</span>
@@ -293,8 +293,8 @@ export default function DashboardPage() {
             <Tabs defaultValue="projects" className="space-y-8">
 
                 {/* TAB LIST + SEARCH */}
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 border-b border-white/5 pb-6">
-                    <TabsList className="bg-slate-200/50 dark:bg-white/5 p-1 h-auto rounded-full border border-slate-200 dark:border-white/5 backdrop-blur-md">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 border-b border-border/40 pb-6">
+                    <TabsList className="bg-secondary/40 dark:bg-white/5 p-1 h-auto rounded-full border border-border/40 dark:border-white/5 backdrop-blur-md">
                         <TabsTrigger value="projects" className="rounded-full px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"><BrainCircuit className="h-4 w-4 mr-2" /> Recommended</TabsTrigger>
                         <TabsTrigger value="requests" className="rounded-full px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"><Send className="h-4 w-4 mr-2" /> Applications ({myRequests.length})</TabsTrigger>
                         <TabsTrigger value="inbox" className="rounded-full px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all relative">
@@ -309,7 +309,7 @@ export default function DashboardPage() {
                         <Input
                             type="search"
                             placeholder="Search projects..."
-                            className="pl-11 h-11 bg-white/60 dark:bg-black/20 border-slate-200 dark:border-white/10 focus:border-primary/50 transition-all rounded-full relative z-0 placeholder:text-muted-foreground/50"
+                            className="pl-11 h-11 bg-card/80 dark:bg-black/20 border-border/50 dark:border-white/10 focus:border-primary/50 transition-all rounded-full relative z-0 placeholder:text-muted-foreground/50"
                             value={searchQuery}
                             onChange={handleSearch}
                         />
@@ -327,13 +327,13 @@ export default function DashboardPage() {
                                     transition={{ delay: index * 0.1 }}
                                     key={project._id || index}
                                 >
-                                    <Card className="flex flex-col h-full border-slate-200 dark:border-white/5 bg-white/60 dark:bg-white/5 hover:bg-white/80 dark:hover:bg-white/10 backdrop-blur-md transition-all duration-300 group hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/10 overflow-hidden relative shadow-sm dark:shadow-none">
+                                    <Card className="flex flex-col h-full border-border/50 dark:border-white/5 bg-card/80 dark:bg-white/5 hover:bg-card/100 dark:hover:bg-white/10 backdrop-blur-md transition-all duration-300 group hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/10 overflow-hidden relative shadow-sm dark:shadow-none">
                                         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
                                         <CardHeader className="pb-3 relative z-10">
                                             <div className="flex justify-between items-start gap-4">
                                                 <CardTitle className="font-headline text-xl line-clamp-1 group-hover:text-primary transition-colors">{project.title}</CardTitle>
-                                                <Badge variant="outline" className="shrink-0 border-slate-200 dark:border-white/10 bg-slate-100 dark:bg-black/20 backdrop-blur-md">{project.techStack?.[0] || "Tech"}</Badge>
+                                                <Badge variant="outline" className="shrink-0 border-border/40 dark:border-white/10 bg-secondary/50 dark:bg-black/20 backdrop-blur-md">{project.techStack?.[0] || "Tech"}</Badge>
                                             </div>
                                             <CardDescription>by <span className="font-medium text-foreground">{project.owner?.name}</span></CardDescription>
                                         </CardHeader>
@@ -353,7 +353,7 @@ export default function DashboardPage() {
                                         </CardContent>
 
                                         <CardFooter className="pt-0 relative z-10">
-                                            <Button className="w-full bg-slate-100 dark:bg-white/5 hover:bg-primary hover:text-white border border-slate-200 dark:border-white/10 transition-all font-medium" asChild>
+                                            <Button className="w-full bg-secondary/80 dark:bg-white/5 hover:bg-primary hover:text-white border border-border/50 dark:border-white/10 transition-all font-medium" asChild>
                                                 <Link href={`/projects/${project._id}/collaborate`}>View Project</Link>
                                             </Button>
                                         </CardFooter>
@@ -374,7 +374,7 @@ export default function DashboardPage() {
                 {/* ... other tabs (Requests/Inbox) ... */}
 
                 <TabsContent value="requests" className="mt-4">
-                    <Card className="border-slate-200 dark:border-white/5 bg-white/60 dark:bg-white/5 backdrop-blur-xl shadow-sm dark:shadow-none">
+                    <Card className="border-border/50 dark:border-white/5 bg-card/80 dark:bg-white/5 backdrop-blur-xl shadow-sm dark:shadow-none">
                         <CardHeader>
                             <CardTitle className="font-headline flex items-center gap-2"><Send className="h-5 w-5 text-yellow-500" /> Sent Applications</CardTitle>
                         </CardHeader>
@@ -395,7 +395,7 @@ export default function DashboardPage() {
                                     </TableHeader>
                                     <TableBody>
                                         {myRequests.map((req) => (
-                                            <TableRow key={req._id} className="hover:bg-slate-100/50 dark:hover:bg-white/5 border-slate-200 dark:border-white/5 transition-colors">
+                                            <TableRow key={req._id} className="hover:bg-muted/50 dark:hover:bg-white/5 border-border/50 dark:border-white/5 transition-colors">
                                                 <TableCell className="font-medium text-foreground">{req.project?.title}</TableCell>
                                                 <TableCell className="text-muted-foreground">{new Date(req.createdAt).toLocaleDateString()}</TableCell>
                                                 <TableCell>{getStatusBadge(req.status)}</TableCell>
@@ -409,7 +409,7 @@ export default function DashboardPage() {
                 </TabsContent>
 
                 <TabsContent value="inbox" className="mt-4">
-                    <Card className="border-slate-200 dark:border-white/5 bg-white/60 dark:bg-white/5 backdrop-blur-xl shadow-sm dark:shadow-none">
+                    <Card className="border-border/50 dark:border-white/5 bg-card/80 dark:bg-white/5 backdrop-blur-xl shadow-sm dark:shadow-none">
                         <CardHeader>
                             <CardTitle className="font-headline flex items-center gap-2">
                                 <Inbox className="h-5 w-5 text-blue-500" /> Incoming Requests
@@ -419,18 +419,22 @@ export default function DashboardPage() {
                             {incomingRequests.length > 0 ? (
                                 <div className="space-y-4">
                                     {incomingRequests.map((req) => (
-                                        <div key={req._id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/20 hover:border-primary/30 transition-all gap-4 group">
+                                        <div key={req._id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-border/50 dark:border-white/10 bg-secondary/30 dark:bg-black/20 hover:border-primary/30 transition-all gap-4 group">
                                             <div className="flex items-start gap-4">
-                                                <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shadow-[0_0_15px_-5px_var(--primary)]">
-                                                    {req.applicant?.name?.charAt(0) || "U"}
-                                                </div>
+                                                <Link href={`/users/${req.applicant?._id}`}>
+                                                    <div className="h-10 w-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shadow-[0_0_15px_-5px_var(--primary)] cursor-pointer hover:scale-110 transition-transform">
+                                                        {req.applicant?.name?.charAt(0) || "U"}
+                                                    </div>
+                                                </Link>
                                                 <div>
                                                     <div className="flex items-center gap-2">
-                                                        <h4 className="font-semibold text-sm group-hover:text-primary transition-colors">{req.applicant?.name || "Unknown User"}</h4>
+                                                        <Link href={`/users/${req.applicant?._id}`} className="hover:underline">
+                                                            <h4 className="font-semibold text-sm text-foreground hover:text-primary transition-colors">{req.applicant?.name || "Unknown User"}</h4>
+                                                        </Link>
                                                         <Badge variant="outline" className="text-[10px] h-5 border-slate-200 dark:border-white/10 bg-white/50 dark:bg-white/5 text-muted-foreground">{req.applicant?.experienceLevel || "N/A"}</Badge>
                                                     </div>
                                                     <p className="text-sm text-muted-foreground mt-0.5">wants to join <span className="font-medium text-foreground">{req.project?.title}</span></p>
-                                                    {req.message && <p className="text-xs text-muted-foreground mt-2 bg-white/50 dark:bg-white/5 p-2 rounded border border-slate-200 dark:border-white/5 italic">"{req.message}"</p>}
+                                                    {req.message && <p className="text-xs text-muted-foreground mt-2 bg-card/50 dark:bg-white/5 p-2 rounded border border-border/50 dark:border-white/5 italic">"{req.message}"</p>}
                                                 </div>
                                             </div>
 
